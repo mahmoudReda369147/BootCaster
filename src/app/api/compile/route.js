@@ -70,7 +70,7 @@ export const POST = asyncWraper(async (request) => {
             "fail"
         );
     }
-    let apiKey = await fetch("http://localhost:3000/api/keys");
+    let apiKey = await fetch("/api/keys");
     apiKey = await apiKey.json();
     apiKey = await apiKey.data.key;
     console.log("apiKey", apiKey);
@@ -115,7 +115,7 @@ export const POST = asyncWraper(async (request) => {
     });
     //create afetch with patch method to update key
     //create afetch with patch method to update key
-    const updateKeyResponse = await fetch("http://localhost:3000/api/keys", {
+    const updateKeyResponse = await fetch("/api/keys", {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -141,7 +141,7 @@ export const POST = asyncWraper(async (request) => {
         uid: userData.uid,
         content,
         characters,
-        link: "http://localhost:3000/audio/" + fileName,
+        link: "/audio/" + fileName,
         name1,
         name2,
         bootcastName,
@@ -162,7 +162,7 @@ export const POST = asyncWraper(async (request) => {
                 uid: userData.uid,
                 content,
                 characters,
-                link: "http://localhost:3000/audio/" + fileName,
+                link: "/audio/" + fileName,
                 name1,
                 name2,
                 bootcastName,

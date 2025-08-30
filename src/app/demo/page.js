@@ -422,7 +422,7 @@ export default function DemoPage() {
             console.log("body", body);
 
             const bootCaste = await axios.post(
-                "http://localhost:3000/api/compile",
+                "/api/compile",
                 body,
                 {
                     //make the time out 5 minutes
