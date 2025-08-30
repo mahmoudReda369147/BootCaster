@@ -41,6 +41,7 @@ export const POST = asyncWraper(async (req) => {
             user.plan = "enterprise";
             user.botcastPlanNumber = 20;
         }
+        user.NumberOfBootCastesIsUsed = 0;
         user.canCreateBootCastes = true
         await user.save();
         break;
@@ -50,6 +51,12 @@ export const POST = asyncWraper(async (req) => {
      const customerId = subscriptions.customer;
      const customer = await stripe.customers.retrieve(customerId);
      console.log(customer);
+     const user3 = await User.findOne({email: customer.email});
+     if(!user3){
+        return NextResponse.json({message: "User not found"},{status: 404});
+     }
+     user3.canCreateBootCastes = false;
+     await user3.save();
         break;
     default:
         console.log(`Unhandled event type ${event.type}`);
