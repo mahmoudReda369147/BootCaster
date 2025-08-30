@@ -7,6 +7,10 @@ import User from "@/models/userModel";
 export const POST = asyncWraper(async (req) => {
     const {email} = await req.json();
     await connectToDatabase();
+    const user = await User.findOne({email});
+    if(user){
+        return NextResponse.json({message: "User already exists"},{status: 200});
+    }
    
     const newUser = await User.create({email});
     return NextResponse.json(newUser);  
