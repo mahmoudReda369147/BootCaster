@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import asyncWraper from "@/utils/asyncWraper";
 
 import connectToDatabase from "@/lib/dbConection";
-import { User } from "@/models/userModel";
+import  User  from "@/models/userModel";
 
 
 
