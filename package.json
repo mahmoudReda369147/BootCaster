@@ -3,8 +3,8 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "concurrently \"next dev --turbopack\" \"node cron.js\"",
-        "build": "next build && node cron.js",
+        "dev": "next dev --turbopack",
+        "build": "next build ",
         "start": "next start",
         "lint": "next lint"
     },
@@ -13,7 +13,6 @@
         "@hookform/resolvers": "^5.1.1",
         "@supabase/supabase-js": "^2.50.5",
         "axios": "^1.10.0",
-        "concurrently": "^9.2.0",
         "cookie-js": "^0.0.1",
         "dotenv": "^17.2.0",
         "firebase": "^11.10.0",
@@ -23,7 +22,6 @@
         "mongoose": "^8.16.3",
         "next": "15.3.5",
         "next-i18next": "^15.4.2",
-        "node-cron": "^4.2.1",
         "node-wav": "^0.0.2",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
