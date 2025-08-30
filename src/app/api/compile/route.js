@@ -70,7 +70,8 @@ export const POST = asyncWraper(async (request) => {
             "fail"
         );
     }
-    let apiKey = await fetch(process.env.NEXT_PUBLIC_DOMAIN+"/api/keys");
+    console.log(`${process.env.NEXT_PUBLIC_DOMAIN}/api/keys`);
+    let apiKey = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/keys`);
     apiKey = await apiKey.json();
     apiKey = await apiKey.data.key;
     console.log("apiKey", apiKey);
@@ -115,7 +116,7 @@ export const POST = asyncWraper(async (request) => {
     });
     //create afetch with patch method to update key
     //create afetch with patch method to update key
-    const updateKeyResponse = await fetch("/api/keys", {
+    const updateKeyResponse = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/keys`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
