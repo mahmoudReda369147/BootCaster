@@ -39,7 +39,7 @@ export const POST = asyncWraper(async (req) => {
            
         }else if(amount_subtotal === 9900){
             user.plan = "enterprise";
-            user.botcastPlanNumber = 20;
+            user.botcastPlanNumber = 30;
         }
         user.NumberOfBootCastesIsUsed = 0;
         user.canCreateBootCastes = true
