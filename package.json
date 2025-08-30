@@ -1,0 +1,45 @@
+{
+    "name": "tailwind-app",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"next dev --turbopack\" \"node cron.js\"",
+        "build": "next build && node cron.js",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@google/genai": "^1.9.0",
+        "@hookform/resolvers": "^5.1.1",
+        "@supabase/supabase-js": "^2.50.5",
+        "axios": "^1.10.0",
+        "concurrently": "^9.2.0",
+        "cookie-js": "^0.0.1",
+        "dotenv": "^17.2.0",
+        "firebase": "^11.10.0",
+        "firebase-admin": "^13.4.0",
+        "i18next": "^25.3.1",
+        "js-cookie": "^3.0.5",
+        "mongoose": "^8.16.3",
+        "next": "15.3.5",
+        "next-i18next": "^15.4.2",
+        "node-cron": "^4.2.1",
+        "node-wav": "^0.0.2",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-hook-form": "^7.60.0",
+        "react-i18next": "^15.6.0",
+        "react-icons": "^5.5.0",
+        "react-toastify": "^11.0.5",
+        "stripe": "^18.4.0",
+        "wav": "^1.0.2",
+        "zod": "^4.0.5"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "^3",
+        "@tailwindcss/postcss": "^4",
+        "eslint": "^9",
+        "eslint-config-next": "15.3.5",
+        "tailwindcss": "^4"
+    }
+}
