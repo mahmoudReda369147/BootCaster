@@ -67,7 +67,7 @@ function CustomAudioPlayer({ src }) {
             <button
                 onClick={togglePlay}
                 className={`flex items-center justify-center w-12 h-12 rounded-full shadow-lg bg-gradient-to-tr from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-                aria-label={isPlaying ? "إيقاف" : "تشغيل"}
+                aria-label={isPlaying ? "إيقاف" : "تشغيل"} 
             >
                 {isPlaying ? (
                     <svg
@@ -981,11 +981,11 @@ export default function DemoPage() {
 
     return (
         <ProtectedRoute>
-            <div className="relative min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex flex-col items-center py-12 px-2">
+            <div className="relative min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex flex-col items-center py-16 px-2">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     {/* Header */}
                     <div className="text-center mb-12">
-                        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 bg-clip-text text-transparent mb-4 drop-shadow-lg">
                             BootCast Playground
                         </h1>
                         <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">

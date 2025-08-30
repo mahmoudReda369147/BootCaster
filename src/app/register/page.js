@@ -89,20 +89,14 @@ export default function RegisterPage() {
 
     return (
         <PublicRoute>
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+            <div className="min-h-screen pt-13 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
                 <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
                     <div className="max-w-md w-full space-y-8">
                         <div className="text-center">
-                            {/* Logo */}
-                            <div className="flex justify-center mb-6">
-                                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center">
-                                    <span className="text-white font-bold text-2xl">
-                                        BC
-                                    </span>
-                                </div>
-                            </div>
+                            
+                            
 
-                            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                            <h2 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 bg-clip-text text-transparent mb-4 drop-shadow-lg">
                                 Create Account
                             </h2>
                             <p className="text-gray-600 dark:text-gray-300">
@@ -347,8 +341,9 @@ export default function RegisterPage() {
                                         <span className="ml-2">Google</span>
                                     </button>
                                     <button
+                                        disabled={true}
                                         type="button"
-                                        className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
+                                        className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <svg
                                             className="w-5 h-5"

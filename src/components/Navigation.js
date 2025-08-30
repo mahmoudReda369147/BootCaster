@@ -21,10 +21,10 @@ export default function Navigation() {
     const handleSignOut = async () => {
         try {
             await signOutUser();
-            toast.success("تم تسجيل الخروج بنجاح");
+            toast.success("logged out successfully"); 
             router.push("/");
         } catch (error) {
-            toast.error("خطأ في تسجيل الخروج");
+            toast.error("error in logging out");
         }
     };
 

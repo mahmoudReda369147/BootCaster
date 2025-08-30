@@ -72,7 +72,7 @@ export default function FAQSection() {
                         >
                             <button
                                 onClick={() => toggleFAQ(index)}
-                                className="w-full px-6 py-6 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset transition-colors duration-200"
+                                className="w-full px-6 py-6 text-left focus:outline-none focus:ring-2 focus:ring-white dark:focus:ring-blue-400 focus:ring-inset transition-colors duration-200"
                             >
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white pr-4">

@@ -68,7 +68,7 @@ export default function DashboardPage() {
     const totalPages = Math.ceil(podcasts.length / podcastsPerPage);
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex flex-col items-center py-12 px-2">
+        <div className="relative min-h-screen bg-gradient-to-br pt-17 from-blue-100 via-white to-purple-100 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex flex-col items-center py-12 px-2">
             {/* Header */}
             <div className="w-full max-w-3xl text-center mb-10 mt-4">
                 <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 bg-clip-text text-transparent mb-4 drop-shadow-lg">
