@@ -70,7 +70,7 @@ export const POST = asyncWraper(async (request) => {
             "fail"
         );
     }
-    let apiKey = await fetch("/api/keys");
+    let apiKey = await fetch(process.env.NEXT_PUBLIC_DOMAIN+"/api/keys");
     apiKey = await apiKey.json();
     apiKey = await apiKey.data.key;
     console.log("apiKey", apiKey);
