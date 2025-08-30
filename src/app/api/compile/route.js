@@ -5,10 +5,9 @@ import bootCasteModel from "@/models/bootCasteModel";
 import connectToDatabase from "@/lib/dbConection";
 import asyncWraper from "@/utils/asyncWraper";
 import { verifyFirebaseToken } from "@/lib/server-auth";
-import path from "path";
-import { writeFile } from "fs/promises";
 import AppError from "@/utils/appError";
 import User from "@/models/userModel";
+import { uploadToS3 } from "@/lib/s3";
 
 function encodeWav(pcmData, channels = 1, sampleRate = 24000) {
     // pcmData: Buffer (int16)
@@ -136,13 +135,19 @@ export const POST = asyncWraper(async (request) => {
     const wavBuffer = encodeWav(audioBuffer);
     const currentDateTime = getCurrentDateTime();
     const fileName = `BootCaster_${currentDateTime}.wav`;
-    const audioPath = path.join(process.cwd(), "public", "audio", fileName);
-    await writeFile(audioPath, wavBuffer);
+    
+    // Upload to S3 instead of local storage
+    const uploadResult = await uploadToS3(wavBuffer, fileName, 'audio/wav');
+    
+    if (!uploadResult.success) {
+        throw new AppError("Failed to upload audio to S3", 500, "fail");
+    }
+    
     const bootCaste = new bootCasteModel({
         uid: userData.uid,
         content,
         characters,
-        link: "/audio/" + fileName,
+        link: uploadResult.url, // Use S3 URL instead of local path
         name1,
         name2,
         bootcastName,
@@ -163,7 +168,7 @@ export const POST = asyncWraper(async (request) => {
                 uid: userData.uid,
                 content,
                 characters,
-                link: "/audio/" + fileName,
+                link: uploadResult.url, // Use S3 URL in response
                 name1,
                 name2,
                 bootcastName,

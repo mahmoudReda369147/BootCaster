@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import PodcastCard from "@/components/PodcastCard";
 import Loading from "@/components/Loading";
+import { handleUniversalDownload } from "@/utils/downloadUtils";
 
 export default function DashboardPage() {
     const [podcasts, setPodcasts] = useState([]);
@@ -120,7 +121,7 @@ export default function DashboardPage() {
                                         [podcast.name1, podcast.name2] || []
                                     }
                                     onDownload={() =>
-                                        window.open(podcast.link, "_blank")
+                                        handleUniversalDownload(podcast.link, `bootcast-${podcast._id}.wav`)
                                     }
                                     onShare={() =>
                                         navigator.clipboard.writeText(

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { FiMoreVertical } from "react-icons/fi";
 import PodcastCard from "@/components/PodcastCard";
+import { handleUniversalDownload } from "@/utils/downloadUtils";
 
 const bootcasts = [
     {
@@ -198,7 +199,7 @@ function BootcastMenu({ audioUrl, onFavorite }) {
                     </button>
                     <button
                         onClick={() => {
-                            window.open(audioUrl, "_blank");
+                            handleUniversalDownload(audioUrl, `bootcast-${Date.now()}.wav`);
                             setOpen(false);
                         }}
                         className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
@@ -249,7 +250,7 @@ export default function ExplorePage() {
                                     characterNames={["Creator"]}
                                     content={""}
                                     onDownload={() =>
-                                        window.open(bootcast.audioUrl, "_blank")
+                                        handleUniversalDownload(bootcast.audioUrl, `bootcast-${bootcast.id}.wav`)
                                     }
                                     onShare={() =>
                                         navigator.clipboard.writeText(

@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Link from "next/link";
+import { handleUniversalDownload } from "@/utils/downloadUtils";
 
 // Custom Audio Player Component
 function CustomAudioPlayer({ src }) {
@@ -499,26 +500,9 @@ export default function DemoPage() {
         }
     };
 
-    // Download handler
+    // Download handler using utility function
     const handleDownload = async (url, filename = "bootcast.wav") => {
-        try {
-            setDownloading(true);
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("Network response was not ok");
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = blobUrl;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(blobUrl);
-        } catch (err) {
-            toast.error("فشل التحميل!");
-        } finally {
-            setDownloading(false);
-        }
+        await handleUniversalDownload(url, filename, setDownloading);
     };
 
     const FileUploadArea = ({ fileType, label, placeholder }) => (
