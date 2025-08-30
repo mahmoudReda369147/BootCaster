@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'standalone',
     webpack: (config, { isServer }) => {
         if (!isServer) {
             // تجاهل مكتبات Node.js في client-side
