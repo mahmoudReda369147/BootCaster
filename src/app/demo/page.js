@@ -1294,7 +1294,7 @@ export default function DemoPage() {
                                             <div className="hidden md:block absolute left-0 top-0 h-full w-2 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500" />
                                             {/* BootCast Name Heading */}
                                             {result.bootcastName && (
-                                                <div className="w-full px-6 pt-6 pb-2 flex items-center">
+                                                <div className="w-full px-1 pt-6 pb-2 flex items-center">
                                                     <h2
                                                         className="text-2xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-200 truncate"
                                                         title={
