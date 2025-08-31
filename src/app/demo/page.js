@@ -1288,7 +1288,7 @@ export default function DemoPage() {
                                         </p>
                                     </div>
                                 ) : result ? (
-                                    <div className="flex justify-center px-2">
+                                    <div className="flex justify-center ">
                                         <div className="relative w-full max-w-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border-2 border-blue-200 dark:border-blue-800 flex flex-col gap-6 p-0 sm:p-0 transition-all duration-300 group">
                                             {/* Accent Bar */}
                                             <div className="hidden md:block absolute left-0 top-0 h-full w-2 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500" />
