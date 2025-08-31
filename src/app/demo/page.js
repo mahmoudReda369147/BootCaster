@@ -7,125 +7,9 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Link from "next/link";
 import { handleUniversalDownload } from "@/utils/downloadUtils";
+import PodcastCard from "@/components/PodcastCard";
 
-// Custom Audio Player Component
-function CustomAudioPlayer({ src }) {
-    const audioRef = useRef(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [seeking, setSeeking] = useState(false);
 
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-        const updateTime = () => setCurrentTime(audio.currentTime);
-        const updateDuration = () => setDuration(audio.duration);
-        audio.addEventListener("timeupdate", updateTime);
-        audio.addEventListener("loadedmetadata", updateDuration);
-        audio.addEventListener("ended", () => setIsPlaying(false));
-        return () => {
-            audio.removeEventListener("timeupdate", updateTime);
-            audio.removeEventListener("loadedmetadata", updateDuration);
-            audio.removeEventListener("ended", () => setIsPlaying(false));
-        };
-    }, []);
-
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-        if (isPlaying) {
-            audio.play();
-        } else {
-            audio.pause();
-        }
-    }, [isPlaying]);
-
-    const togglePlay = () => setIsPlaying((p) => !p);
-
-    const handleSeek = (e) => {
-        const rect = e.target.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        const seekTime = percent * duration;
-        setCurrentTime(seekTime);
-        audioRef.current.currentTime = seekTime;
-    };
-
-    const formatTime = (t) => {
-        if (isNaN(t)) return "0:00";
-        const m = Math.floor(t / 60);
-        const s = Math.floor(t % 60)
-            .toString()
-            .padStart(2, "0");
-        return `${m}:${s}`;
-    };
-
-    return (
-        <div className="w-full flex items-center space-x-4 rtl:space-x-reverse bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 rounded-xl px-4 py-3 shadow-md border border-blue-200 dark:border-blue-700">
-            {/* Play/Pause Button */}
-            <button
-                onClick={togglePlay}
-                className={`flex items-center justify-center w-12 h-12 rounded-full shadow-lg bg-gradient-to-tr from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-                aria-label={isPlaying ? "إيقاف" : "تشغيل"} 
-            >
-                {isPlaying ? (
-                    <svg
-                        className="w-7 h-7 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                    >
-                        <rect x="6" y="5" width="4" height="14" rx="2" />
-                        <rect x="14" y="5" width="4" height="14" rx="2" />
-                    </svg>
-                ) : (
-                    <svg
-                        className="w-7 h-7 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                    >
-                        <polygon points="5,3 19,12 5,21 5,3" />
-                    </svg>
-                )}
-            </button>
-            {/* Progress Bar */}
-            <div className="flex-1 flex flex-col">
-                <div
-                    className="relative h-3 w-full cursor-pointer group"
-                    onClick={handleSeek}
-                    onMouseDown={() => setSeeking(true)}
-                    onMouseUp={() => setSeeking(false)}
-                >
-                    <div className="absolute top-1/2 left-0 w-full h-2 -translate-y-1/2 bg-gray-200 dark:bg-gray-700 rounded-full" />
-                    <div
-                        className="absolute top-1/2 left-0 h-2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-200"
-                        style={{
-                            width: duration
-                                ? `${(currentTime / duration) * 100}%`
-                                : "0%",
-                        }}
-                    />
-                    {/* Removed the circular indicator (dot) */}
-                </div>
-                {/* Time Display */}
-                <div className="flex justify-between text-xs text-gray-600 dark:text-gray-300 mt-1 font-mono">
-                    <span>{formatTime(currentTime)}</span>
-                    <span>{formatTime(duration)}</span>
-                </div>
-            </div>
-            {/* Hidden Native Audio */}
-            <audio
-                ref={audioRef}
-                src={src}
-                preload="metadata"
-                style={{ display: "none" }}
-            />
-        </div>
-    );
-}
 
 // CharacterNameInput: memoized input for character name
 const CharacterNameInput = memo(function CharacterNameInput({
@@ -1288,129 +1172,20 @@ export default function DemoPage() {
                                         </p>
                                     </div>
                                 ) : result ? (
-                                    <div className="flex justify-center ">
-                                        <div className="relative w-full max-w-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border-2 border-blue-200 dark:border-blue-800 flex flex-col gap-6 p-0 sm:p-0 transition-all duration-300 group">
-                                            {/* Accent Bar */}
-                                            <div className="hidden md:block absolute left-0 top-0 h-full w-2 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500" />
-                                            {/* BootCast Name Heading */}
-                                            {result.bootcastName && (
-                                                <div className="w-full px-1 pt-6 pb-2 flex items-center">
-                                                    <h2
-                                                        className="text-2xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-200 truncate"
-                                                        title={
-                                                            result.bootcastName
-                                                        }
-                                                    >
-                                                        {result.bootcastName}
-                                                    </h2>
-                                                </div>
-                                            )}
-                                            {/* Header: Avatars + Title */}
-                                            <div className="flex items-center gap-4 px-6 pt-2 pb-2">
-                                                <div className="relative flex items-center">
-                                                    <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-blue-400 to-purple-400 flex items-center justify-center shadow-lg border-4 border-white dark:border-gray-900">
-                                                        <img
-                                                            src={
-                                                                result
-                                                                    .characterDetails[0]
-                                                                    ?.image
-                                                            }
-                                                            alt={
-                                                                result
-                                                                    .characterNames[0]
-                                                            }
-                                                            className="w-16 h-16 rounded-full object-cover"
-                                                            onError={(e) => {
-                                                                e.target.src = `https://ui-avatars.com/api/?name=${result.characterNames[0]}&background=blue&color=fff&size=64`;
-                                                            }}
-                                                        />
-                                                    </div>
-                                                    {result
-                                                        .characterDetails[1] && (
-                                                        <div className="absolute -bottom-2 -right-4 w-12 h-12 rounded-full bg-gradient-to-tr from-purple-400 to-pink-400 flex items-center justify-center shadow-md border-4 border-white dark:border-gray-900">
-                                                            <img
-                                                                src={
-                                                                    result
-                                                                        .characterDetails[1]
-                                                                        ?.image
-                                                                }
-                                                                alt={
-                                                                    result
-                                                                        .characterNames[1]
-                                                                }
-                                                                className="w-9 h-9 rounded-full object-cover"
-                                                                onError={(
-                                                                    e
-                                                                ) => {
-                                                                    e.target.src = `https://ui-avatars.com/api/?name=${result.characterNames[1]}&background=purple&color=fff&size=64`;
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 flex flex-col items-start justify-center">
-                                                    <span className="text-lg font-bold text-blue-900 dark:text-blue-200 mb-1">
-                                                        BootCast Generated
-                                                    </span>
-                                                    <span className="text-sm text-gray-500 dark:text-gray-300">
-                                                        {result.characterNames.join(
-                                                            " & "
-                                                        )}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            {/* Audio Player with Wave Icon */}
-                                            <div className="flex flex-col items-center justify-center px-6">
-                                                <div className="w-full max-w-md bg-white/60 dark:bg-gray-800/60 backdrop-blur rounded-2xl shadow-lg p-4 flex flex-col items-center relative">
-                                                    <CustomAudioPlayer
-                                                        src={result.audioUrl}
-                                                    />
-                                                </div>
-                                            </div>
-                                            {/* Dialogue Content (no quote icon) */}
-                                            <div className="relative w-full overflow-x-auto px-6">
-                                                <div className="flex items-start bg-white/95 dark:bg-gray-800/95 rounded-2xl shadow-inner border-l-4 border-blue-500 dark:border-blue-600 p-6 relative">
-                                                    <pre
-                                                        className="flex-1 text-lg sm:text-xl text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-sans bg-transparent border-0 shadow-none p-0 m-0"
-                                                        dir="ltr"
-                                                    >
-                                                        {result.content}
-                                                    </pre>
-                                                </div>
-                                            </div>
-                                            {/* Actions */}
-                                            <div className="flex flex-col sm:flex-row sm:space-x-4 rtl:space-x-reverse mt-2 w-full gap-3 px-6 pb-6">
-                                                <button
-                                                    onClick={() =>
-                                                        handleDownload(
-                                                            result.audioUrl,
-                                                            "bootcast.wav"
-                                                        )
-                                                    }
-                                                    disabled={downloading}
-                                                    className={`flex-1 bg-blue-700 hover:bg-blue-800 text-white py-3 px-4 rounded-2xl shadow-lg transition-all duration-200 text-lg font-bold mb-2 sm:mb-0 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center ${
-                                                        downloading
-                                                            ? "opacity-60 cursor-not-allowed"
-                                                            : ""
-                                                    }`}
-                                                >
-                                                    {downloading
-                                                        ? "Downloading..."
-                                                        : "Download"}
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        navigator.clipboard.writeText(
-                                                            result.audioUrl
-                                                        )
-                                                    }
-                                                    className="flex-1 bg-purple-700 hover:bg-purple-800 text-white py-3 px-4 rounded-2xl shadow-lg transition-all duration-200 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-purple-400 text-center"
-                                                >
-                                                    Copy Link
-                                                </button>
-                                            </div>
-                                            {/* UID */}
-                                        </div>
+                                    <div className="flex justify-center">
+                                        <PodcastCard
+                                            title={result.bootcastName || "Generated BootCast"}
+                                            date={new Date().toLocaleDateString()}
+                                            duration="Generated"
+                                            audioUrl={result.audioUrl}
+                                            characterImages={result.characterDetails.map(char => char?.image)}
+                                            characterNames={result.characterNames}
+                                            onDownload={() => handleDownload(result.audioUrl, "bootcast.wav")}
+                                            onShare={() => {
+                                                navigator.clipboard.writeText(result.audioUrl);
+                                                toast.success("Link copied to clipboard!");
+                                            }}
+                                        />
                                     </div>
                                 ) : (
                                     <div className="text-center py-12">
