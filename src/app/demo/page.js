@@ -1156,7 +1156,7 @@ export default function DemoPage() {
 
                         {/* Results Section */}
                         <div className="space-y-6">
-                            <div className={`bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700 ${!isLoadingUserPlan && userPlan && !userPlan.canCreateBootCastes ? 'hidden' : ''}`}>
+                            <div className={`bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-8 px-3 border border-gray-200 dark:border-gray-700 ${!isLoadingUserPlan && userPlan && !userPlan.canCreateBootCastes ? 'hidden' : ''}`}>
                                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                                     Generated BootCast
                                 </h2>
