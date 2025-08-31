@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, memo, useLayoutEffect } from "react";
-import { useForm } from "react-hook-form";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
@@ -151,7 +150,6 @@ const CharacterNameInput = memo(function CharacterNameInput({
 });
 
 export default function DemoPage() {
-    const [activeTab, setActiveTab] = useState("upload"); // "upload" or "write"
     const [selectedCharacters, setSelectedCharacters] = useState([]);
     const [characters, setCharacters] = useState([]);
     const [isLoadingCharacters, setIsLoadingCharacters] = useState(true);
@@ -163,6 +161,9 @@ export default function DemoPage() {
     const [dragActive, setDragActive] = useState({
         promptFile: false,
     });
+    // Add state for input method choice
+    const [inputMethod, setInputMethod] = useState('file'); // 'file' or 'text'
+    const [textContent, setTextContent] = useState('');
     const [playingAudio, setPlayingAudio] = useState(null);
     // Add state for download loading
     const [downloading, setDownloading] = useState(false);
@@ -177,21 +178,6 @@ export default function DemoPage() {
     // Add userPlan state to main component
     const [userPlan, setUserPlan] = useState(null);
     const [isLoadingUserPlan, setIsLoadingUserPlan] = useState(true);
-
-    // React Hook Form setup
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            textInput: "",
-        },
-    });
-
-    const textInput = watch("textInput");
-    const textareaRef = useRef(null);
 
     // Function to get character selection classes
     const getSelectedCharacterClass = (color) => {
@@ -280,14 +266,7 @@ export default function DemoPage() {
         fetchCharacters();
     }, []);
 
-    // Focus textarea when switching to write tab
-    useEffect(() => {
-        if (activeTab === "write" && textareaRef.current) {
-            setTimeout(() => {
-                textareaRef.current.focus();
-            }, 100);
-        }
-    }, [activeTab]);
+
 
     // Cleanup audio when component unmounts
     useEffect(() => {
@@ -384,21 +363,21 @@ export default function DemoPage() {
         });
     };
 
-    const onSubmit = async (data) => {
+    const onSubmit = async () => {
         setIsGenerating(true);
         setResult(null);
         try {
             const token = JSON.parse(Cookies.get("userData")).stsTokenManager
                 .accessToken;
 
-            // تحديد المحتوى: إما من الملف أو من النص المكتوب
+            // تحديد المحتوى: من الملف أو النص المباشر
             let content = "";
-            if (activeTab === "upload" && files.promptFile) {
+            if (inputMethod === 'file' && files.promptFile) {
                 // قراءة محتوى الملف
                 content = await readTextFile(files.promptFile);
-            } else {
-                // استخدام النص المكتوب
-                content = data.textInput || "";
+            } else if (inputMethod === 'text' && textContent.trim()) {
+                // استخدام النص المباشر
+                content = textContent.trim();
             }
 
             const body = {
@@ -427,7 +406,7 @@ export default function DemoPage() {
                 body,
                 {
                     //make the time out 5 minutes
-                    timeout: 300000,
+                    timeout: 900000,
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -491,13 +470,7 @@ export default function DemoPage() {
     };
 
     const handleGenerate = () => {
-        if (activeTab === "write") {
-            // Use react-hook-form for text input
-            handleSubmit(onSubmit)();
-        } else {
-            // Handle file upload case
-            onSubmit({});
-        }
+        onSubmit();
     };
 
     // Download handler using utility function
@@ -924,60 +897,7 @@ export default function DemoPage() {
         );
     };
 
-    const TextInputArea = ({ label, placeholder, maxLength = 2000 }) => {
-        const handleTextChange = (e) => {
-            setTimeout(() => {
-                if (textareaRef.current) {
-                    textareaRef.current.focus();
-                    // Set cursor position to end
-                    const length = e.target.value.length;
-                    textareaRef.current.setSelectionRange(length, length);
-                }
-            }, 0);
-        };
 
-        return (
-            <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {label}
-                </label>
-                <div className="relative">
-                    <textarea
-                        {...register("textInput", {
-                            required:
-                                activeTab === "write"
-                                    ? "Text input is required"
-                                    : false,
-                            maxLength: {
-                                value: maxLength,
-                                message: `Text cannot exceed ${maxLength} characters`,
-                            },
-                        })}
-                        ref={(e) => {
-                            textareaRef.current = e;
-                            register("textInput").ref(e);
-                        }}
-                        onChange={(e) => {
-                            register("textInput").onChange(e);
-                            handleTextChange(e);
-                        }}
-                        placeholder={placeholder}
-                        rows={8}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
-                        dir="ltr"
-                    />
-                    <div className="absolute bottom-2 right-2 text-xs text-gray-500 dark:text-gray-400">
-                        {textInput.length}/{maxLength}
-                    </div>
-                    {errors.textInput && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                            {errors.textInput.message}
-                        </p>
-                    )}
-                </div>
-            </div>
-        );
-    };
 
     return (
         <ProtectedRoute>
@@ -1113,29 +1033,6 @@ export default function DemoPage() {
                         {/* Input Section */}
                         <div className="space-y-6">
                             <div className={`bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700 ${!isLoadingUserPlan && userPlan && !userPlan.canCreateBootCastes ? 'hidden' : ''}`}>
-                                {/* Tab Navigation */}
-                                <div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                                    <button
-                                        onClick={() => setActiveTab("upload")}
-                                        className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-                                            activeTab === "upload"
-                                                ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-                                                : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                                        }`}
-                                    >
-                                        Upload File
-                                    </button>
-                                    <button
-                                        onClick={() => setActiveTab("write")}
-                                        className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-                                            activeTab === "write"
-                                                ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-                                                : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                                        }`}
-                                    >
-                                        Write Text
-                                    </button>
-                                </div>
 
                                 {/* Toggle Switch: Prompt or Direct Conversation */}
                                 <div className="flex items-center justify-between mb-6 w-full max-w-md mx-auto">
@@ -1185,8 +1082,75 @@ export default function DemoPage() {
                                     />
                                 </div>
 
-                                {/* Content based on active tab */}
-                                {activeTab === "upload" ? (
+                                {/* Input Method Selector */}
+                                {/* Beautiful Full-Width Toggle */}
+                                <div className="space-y-4">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                        Choose Input Method
+                                    </label>
+                                    <div className="relative w-full bg-gray-100 dark:bg-gray-700 rounded-2xl p-1 shadow-inner border border-gray-200 dark:border-gray-600">
+                                        {/* Animated Background Slider */}
+                                        <div 
+                                            className={`absolute top-1 bottom-1 w-1/2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl shadow-lg transition-all duration-500 ease-in-out ${
+                                                inputMethod === 'text' ? 'translate-x-full' : 'translate-x-0'
+                                            }`}
+                                        />
+                                        
+                                        {/* Toggle Buttons */}
+                                        <div className="relative flex w-full">
+                                            <button
+                                                onClick={() => setInputMethod('file')}
+                                                className={`flex-1 flex items-center justify-center space-x-2 rtl:space-x-reverse py-4 px-6 rounded-xl font-semibold text-sm transition-all duration-300 relative z-10 ${
+                                                    inputMethod === 'file'
+                                                        ? 'text-white'
+                                                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
+                                                }`}
+                                            >
+                                                <svg className={`w-5 h-5 transition-all duration-300 ${
+                                                    inputMethod === 'file' ? 'scale-110' : 'scale-100'
+                                                }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                </svg>
+                                                <span className="font-medium">Upload File</span>
+                                            </button>
+                                            
+                                            <button
+                                                onClick={() => setInputMethod('text')}
+                                                className={`flex-1 flex items-center justify-center space-x-2 rtl:space-x-reverse py-4 px-6 rounded-xl font-semibold text-sm transition-all duration-300 relative z-10 ${
+                                                    inputMethod === 'text'
+                                                        ? 'text-white'
+                                                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
+                                                }`}
+                                            >
+                                                <svg className={`w-5 h-5 transition-all duration-300 ${
+                                                    inputMethod === 'text' ? 'scale-110' : 'scale-100'
+                                                }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                                <span className="font-medium">Write Text</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Active State Indicator */}
+                                    <div className="flex justify-center">
+                                        <div className={`flex items-center space-x-2 rtl:space-x-reverse px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+                                            inputMethod === 'file'
+                                                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                                                : 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                                        }`}>
+                                            <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                                inputMethod === 'file' ? 'bg-blue-500' : 'bg-purple-500'
+                                            }`} />
+                                            <span>
+                                                {inputMethod === 'file' ? 'File Upload Mode' : 'Text Input Mode'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* File Upload Area - Show only when file method is selected */}
+                                {inputMethod === 'file' && (
                                     <div className="space-y-6">
                                         <FileUploadArea
                                             fileType="promptFile"
@@ -1194,12 +1158,29 @@ export default function DemoPage() {
                                             placeholder="Upload your prompt or main content file..."
                                         />
                                     </div>
-                                ) : (
-                                    <div className="space-y-6">
-                                        <TextInputArea
-                                            label="Prompt Text"
-                                            placeholder="Enter your main content, prompt, or script here..."
-                                        />
+                                )}
+
+                                {/* Text Area - Show only when text method is selected */}
+                                {inputMethod === 'text' && (
+                                    <div className="space-y-4">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Write Your Content
+                                        </label>
+                                        <div className="relative">
+                                            <textarea
+                                                value={textContent}
+                                                onChange={(e) => setTextContent(e.target.value)}
+                                                placeholder="Write your BootCast content here... You can include dialogue, narration, or any text you want to convert to speech."
+                                                className="w-full h-48 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 resize-none"
+                                                maxLength={2000}
+                                            />
+                                            <div className="absolute bottom-3 right-3 text-xs text-gray-400 dark:text-gray-500">
+                                                {textContent.length}/2,000
+                                            </div>
+                                        </div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                                            Minimum 10 characters required. Write clear, well-structured text for best results.
+                                        </div>
                                     </div>
                                 )}
 
@@ -1213,11 +1194,8 @@ export default function DemoPage() {
                                             selectedCharacters.length !== 2 ||
                                             characterNames[0].length <= 2 ||
                                             characterNames[1].length <= 2 ||
-                                            (activeTab === "upload"
-                                                ? !files.promptFile
-                                                : !textInput.trim()) ||
-                                            (activeTab === "write" &&
-                                                Object.keys(errors).length > 0)
+                                            (inputMethod === 'file' && !files.promptFile) ||
+                                            (inputMethod === 'text' && textContent.trim().length < 10)
                                         }
                                         className="w-full flex justify-center items-center py-3 px-6 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:-translate-y-1"
                                     >
@@ -1274,21 +1252,19 @@ export default function DemoPage() {
                                 </h3>
                                 <ul className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
                                     <li>
-                                        • <strong>Prompt File:</strong> Contains
-                                        your main content, script, or primary
-                                        message
+                                        • <strong>Upload File:</strong> Upload TXT files up to 10MB containing your content
                                     </li>
                                     <li>
-                                        • Use clear, well-structured text for
-                                        best results
+                                        • <strong>Write Text:</strong> Type your content directly in the text area
                                     </li>
                                     <li>
-                                        • Experiment with different content
-                                        combinations
+                                        • Use clear, well-structured text for best results
                                     </li>
                                     <li>
-                                        • This is a demo - results are simulated
-                                        for preview
+                                        • Minimum 10 characters required for text input
+                                    </li>
+                                    <li>
+                                        • This is a demo - results are simulated for preview
                                     </li>
                                 </ul>
                             </div>
@@ -1456,8 +1432,7 @@ export default function DemoPage() {
                                             here...
                                         </p>
                                         <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                                            Upload files or write text to get
-                                            started
+                                            Upload a file or write text to get started
                                         </p>
                                     </div>
                                 )}
