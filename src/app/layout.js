@@ -21,6 +21,7 @@ export const metadata = {
     title: "BootCaster - AI-Powered BootCast Generator",
     description:
         "Convert your formatted text files into engaging BootCasts using AI technology",
+    manifest:"/manifest.json"
 };
 
 export default function RootLayout({ children }) {
