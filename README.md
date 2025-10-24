@@ -12,7 +12,7 @@ A modern web application that converts formatted text files into engaging BootCa
 - 📁 **File Upload**: Support for TXT, DOC, DOCX, and PDF files
 - 🎯 **Demo Mode**: Try the application without registration
 
-## Internationalization (i18n)
+## Internationalization (i18n) 
 
 This application includes a comprehensive internationalization system with the following features:
 
